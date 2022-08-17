@@ -18,17 +18,18 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	FVector InitialPos;
 
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UPROPERTY(EditAnywhere)
-	float MyFisrtFloat = 3.141516;
+	UPROPERTY(EditAnywhere, Category="Platform Movement")
+	FVector SpeedPlatform = FVector(0, 100, 0);
+
+	UPROPERTY(VisibleAnywhere, Category="Platform Movement")
+	float DistanceTravelled = 0;
 
 	UPROPERTY(EditAnywhere)
-	bool bIsTurnOn = true;
-
-	UPROPERTY(EditAnywhere)
-	float MyFisrtInt = 88;
+	float RangeMovement = 850;
 };
