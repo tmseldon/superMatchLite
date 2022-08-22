@@ -15,26 +15,44 @@ AMovingPlatform::AMovingPlatform()
 void AMovingPlatform::BeginPlay()
 {
 	Super::BeginPlay();
-	InitialPos = GetActorLocation();
+	mInitialPos = GetActorLocation();
+	mNameObj = GetName();
 }
 
 // Called every frame
 void AMovingPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	MovePlatform(DeltaTime);
+}
 
+void AMovingPlatform::MovePlatform(float DeltaTime)
+{
 	//Get current location
 	FVector MyCurrentLocation = GetActorLocation();
-	
-	//Calculate distance
-	float DistanceOverInit = FVector::Dist(InitialPos, MyCurrentLocation);
-	DistanceTravelled = DistanceOverInit;
 
-	if (DistanceOverInit <= RangeMovement)
+	//Add change in location and set it to actor
+	MyCurrentLocation += SpeedPlatform * DeltaTime;
+	SetActorLocation(MyCurrentLocation);
+
+	//Calculate distance
+	float DistanceTravelled = FVector::Dist(mInitialPos, MyCurrentLocation);
+
+	//Object on limit by range value
+	if (DistanceTravelled > RangeMovement)
 	{
-		//Add change in location and set it to actor
-		MyCurrentLocation += SpeedPlatform * DeltaTime;
-		SetActorLocation(MyCurrentLocation);
+		//Overshoot info
+		float OverShootValue = RangeMovement - DistanceTravelled;
+		UE_LOG(LogTemp, Display, TEXT("La diferencia es de %f y el objeto es %s"), OverShootValue, *mNameObj)
+
+		//Setting new starting point by sum previous initial location + vector speed normalized * rangeMovement
+		mInitialPos = mInitialPos + SpeedPlatform.GetSafeNormal() * RangeMovement;
+		SetActorLocation(mInitialPos);
+		SpeedPlatform = -1 * SpeedPlatform;
 	}
 }
 
+void AMovingPlatform::RotatePlatform(float DeltaTime)
+{
+	UE_LOG(LogTemp, Display, TEXT("rotantdo acá"))
+}
