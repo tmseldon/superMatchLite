@@ -24,35 +24,38 @@ void AMovingPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 	MovePlatform(DeltaTime);
+	if(bIsRotating) { RotatePlatform(DeltaTime); }
 }
 
 void AMovingPlatform::MovePlatform(float DeltaTime)
 {
+	if(ShouldMoveBack())
+	{
+		//Setting new starting point by sum previous initial location + vector speed normalized * rangeMovement
+		mInitialPos = mInitialPos + SpeedPlatform.GetSafeNormal() * RangeMovement;
+		SetActorLocation(mInitialPos);
+		SpeedPlatform = -1 * SpeedPlatform;
+		return;
+	}
+
 	//Get current location
 	FVector MyCurrentLocation = GetActorLocation();
 
 	//Add change in location and set it to actor
 	MyCurrentLocation += SpeedPlatform * DeltaTime;
 	SetActorLocation(MyCurrentLocation);
+}
 
-	//Calculate distance
-	float DistanceTravelled = FVector::Dist(mInitialPos, MyCurrentLocation);
-
-	//Object on limit by range value
-	if (DistanceTravelled > RangeMovement)
-	{
-		//Overshoot info
-		float OverShootValue = RangeMovement - DistanceTravelled;
-		UE_LOG(LogTemp, Display, TEXT("La diferencia es de %f y el objeto es %s"), OverShootValue, *mNameObj)
-
-		//Setting new starting point by sum previous initial location + vector speed normalized * rangeMovement
-		mInitialPos = mInitialPos + SpeedPlatform.GetSafeNormal() * RangeMovement;
-		SetActorLocation(mInitialPos);
-		SpeedPlatform = -1 * SpeedPlatform;
-	}
+bool AMovingPlatform::ShouldMoveBack() const
+{
+	return FVector::Dist(mInitialPos, GetActorLocation()) > RangeMovement;
 }
 
 void AMovingPlatform::RotatePlatform(float DeltaTime)
 {
-	UE_LOG(LogTemp, Display, TEXT("rotantdo acá"))
+	//FRotator MyCurrentRotation = GetActorRotation();
+	//MyCurrentRotation += AngularSpeedPlatform * DeltaTime;
+	//SetActorRotation(MyCurrentRotation);
+
+	AddActorLocalRotation(AngularSpeedPlatform * DeltaTime);
 }
