@@ -26,11 +26,17 @@ public:
 
 private:
 	//Params on Editor
-	UPROPERTY(EditAnywhere, Category="Movement Params")
+	UPROPERTY(EditAnywhere, Category="Movement")
 	FVector SpeedPlatform = FVector(0, 100, 0);
 
-	UPROPERTY(EditAnywhere, Category = "Movement Params")
+	UPROPERTY(EditAnywhere, Category = "Movement")
 	float RangeMovement = 850;
+
+	UPROPERTY(EditAnywhere, Category = "Rotation")
+	bool bIsRotating = false;
+
+	UPROPERTY(EditAnywhere, Category = "Rotation")
+	FRotator AngularSpeedPlatform = FRotator(0, 10, 0);
 
 	//Internal Variables
 	FVector mInitialPos;
@@ -39,4 +45,5 @@ private:
 	//Methods
 	void MovePlatform(float DeltaTime);
 	void RotatePlatform(float DeltaTime);
+	bool ShouldMoveBack() const;
 };
